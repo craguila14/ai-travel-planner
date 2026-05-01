@@ -1,0 +1,140 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Trip {
+  id           String       @id @default(cuid())
+  slug         String       @unique
+  name         String
+  destination  String
+  startDate    DateTime
+  endDate      DateTime
+  currency     String       @default("USD")
+  status       TripStatus   @default(COLLECTING)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  participants Participant[]
+  proposals    Proposal[]
+  itineraries  Itinerary[]
+}
+
+model Participant {
+  id          String   @id @default(cuid())
+  tripId      String
+  displayName String
+  isOrganizer Boolean  @default(false)
+  joinedAt    DateTime @default(now())
+
+  trip      Trip       @relation(fields: [tripId], references: [id])
+  proposal  Proposal?
+  votes     Vote[]
+}
+
+model Proposal {
+  id            String   @id @default(cuid())
+  tripId        String
+  participantId String   @unique
+  budgetMin     Decimal
+  budgetMax     Decimal
+  style         String[]
+  pace          String
+  schedule      String
+  mustVisit     String
+  mustAvoid     String
+  notes         String?
+  submittedAt   DateTime @default(now())
+
+  trip        Trip        @relation(fields: [tripId], references: [id])
+  participant Participant @relation(fields: [participantId], references: [id])
+}
+
+model Itinerary {
+  id             String          @id @default(cuid())
+  tripId         String
+  version        Int
+  rationale      String          @db.Text
+  totalPerPerson Decimal
+  status         ItineraryStatus @default(DRAFT)
+  promptVersion  String
+  createdAt      DateTime        @default(now())
+
+  trip Trip          @relation(fields: [tripId], references: [id])
+  days ItineraryDay[]
+}
+
+model ItineraryDay {
+  id          String @id @default(cuid())
+  itineraryId String
+  dayNumber   Int
+  date        DateTime
+
+  itinerary  Itinerary  @relation(fields: [itineraryId], references: [id])
+  activities Activity[]
+}
+
+model Activity {
+  id            String   @id @default(cuid())
+  dayId         String
+  startTime     String
+  endTime       String
+  title         String
+  description   String   @db.Text
+  category      String
+  placeId       String
+  estimatedCost Decimal
+  
+  day   ItineraryDay @relation(fields: [dayId], references: [id])
+  votes Vote[]
+}
+
+model Vote {
+  id            String    @id @default(cuid())
+  activityId    String
+  participantId String
+  value         VoteValue
+  createdAt     DateTime  @default(now())
+
+  activity    Activity    @relation(fields: [activityId], references: [id])
+  participant Participant @relation(fields: [participantId], references: [id])
+
+  @@unique([activityId, participantId])
+}
+
+model LlmCallLog {
+  id            String   @id @default(cuid())
+  createdAt     DateTime @default(now())
+  promptVersion String
+  model         String
+  inputTokens   Int
+  outputTokens  Int
+  latencyMs     Int
+  costUsd       Decimal
+  success       Boolean
+  errorType     String?
+  retryCount    Int      @default(0)
+  tripId        String?
+}
+
+enum TripStatus {
+  COLLECTING
+  GENERATING
+  VOTING
+  DONE
+}
+
+enum ItineraryStatus {
+  DRAFT
+  VOTING
+  APPROVED
+}
+
+enum VoteValue {
+  UP
+  DOWN
+}

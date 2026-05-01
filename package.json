@@ -1,0 +1,17 @@
+{
+  "name": "travel-planner",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "api:dev": "pnpm --filter api run start:dev",
+    "api:build": "pnpm --filter api run build",
+    "api:test": "pnpm --filter api run test",
+    "web:dev": "pnpm --filter web run dev",
+    "web:build": "pnpm --filter web run build",
+    "api:eval": "pnpm --filter api run eval"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  }
+}

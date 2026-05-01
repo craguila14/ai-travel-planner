@@ -1,0 +1,28 @@
+{
+  "trip": {
+    "destination": "Tokyo, Japón",
+    "startDate": "2025-09-10",
+    "endDate": "2025-09-14",
+    "currency": "USD"
+  },
+  "proposals": [
+    {
+      "budgetMin": 800,
+      "budgetMax": 1000,
+      "style": ["cultural", "gastronómico"],
+      "pace": "intenso",
+      "schedule": "mañanero",
+      "mustVisit": "Templo Senso-ji y Shibuya",
+      "mustAvoid": "comida picante"
+    },
+    {
+      "budgetMin": 200,
+      "budgetMax": 500,
+      "style": ["naturaleza", "cultural"],
+      "pace": "relajado",
+      "schedule": "flexible",
+      "mustVisit": "Monte Fuji y jardines imperiales",
+      "mustAvoid": "zonas muy turísticas"
+    }
+  ]
+}

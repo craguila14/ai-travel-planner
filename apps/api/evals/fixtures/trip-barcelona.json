@@ -1,0 +1,37 @@
+{
+  "trip": {
+    "destination": "Barcelona, España",
+    "startDate": "2025-06-01",
+    "endDate": "2025-06-05",
+    "currency": "EUR"
+  },
+  "proposals": [
+    {
+      "budgetMin": 400,
+      "budgetMax": 700,
+      "style": ["cultural", "gastronómico"],
+      "pace": "equilibrado",
+      "schedule": "mañanero",
+      "mustVisit": "Sagrada Família y el barrio gótico",
+      "mustAvoid": "discotecas y vida nocturna"
+    },
+    {
+      "budgetMin": 500,
+      "budgetMax": 800,
+      "style": ["gastronómico", "playa"],
+      "pace": "relajado",
+      "schedule": "flexible",
+      "mustVisit": "Barceloneta y mercado de la Boquería",
+      "mustAvoid": "museos de arte moderno"
+    },
+    {
+      "budgetMin": 300,
+      "budgetMax": 600,
+      "style": ["cultural", "naturaleza"],
+      "pace": "equilibrado",
+      "schedule": "mañanero",
+      "mustVisit": "Park Güell y Casa Batlló",
+      "mustAvoid": "mariscos y pescado"
+    }
+  ]
+}

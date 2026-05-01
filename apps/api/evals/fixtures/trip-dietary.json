@@ -1,0 +1,37 @@
+{
+  "trip": {
+    "destination": "Roma, Italia",
+    "startDate": "2025-07-15",
+    "endDate": "2025-07-19",
+    "currency": "EUR"
+  },
+  "proposals": [
+    {
+      "budgetMin": 500,
+      "budgetMax": 900,
+      "style": ["cultural", "gastronómico"],
+      "pace": "equilibrado",
+      "schedule": "mañanero",
+      "mustVisit": "Coliseo y Vaticano",
+      "mustAvoid": "carne de cerdo, soy vegetariana"
+    },
+    {
+      "budgetMin": 400,
+      "budgetMax": 800,
+      "style": ["cultural", "nocturno"],
+      "pace": "intenso",
+      "schedule": "flexible",
+      "mustVisit": "Fontana di Trevi y Trastevere",
+      "mustAvoid": "gluten, soy celíaco"
+    },
+    {
+      "budgetMin": 600,
+      "budgetMax": 1000,
+      "style": ["gastronómico", "naturaleza"],
+      "pace": "relajado",
+      "schedule": "mañanero",
+      "mustVisit": "Villa Borghese y mercados locales",
+      "mustAvoid": "alcohol"
+    }
+  ]
+}

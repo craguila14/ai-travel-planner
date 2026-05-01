@@ -1,0 +1,42 @@
+{
+  "promptVersion": "generate-itinerary.v1",
+  "totalCases": 5,
+  "passed": 5,
+  "failed": 0,
+  "results": [
+    {
+      "caseName": "budget-constraint",
+      "fixture": "trip-barcelona",
+      "passed": true,
+      "message": "Total por persona (583) debe estar entre 500 y 600",
+      "details": "totalPerPerson: 583, viable range: 500-600"
+    },
+    {
+      "caseName": "must-avoid",
+      "fixture": "trip-dietary",
+      "passed": true,
+      "message": "Ninguna actividad viola los must-avoid",
+      "details": ""
+    },
+    {
+      "caseName": "day-count",
+      "fixture": "trip-barcelona",
+      "passed": true,
+      "message": "4 días es válido para el rango de fechas",
+      "details": "startDate: 2025-06-01, endDate: 2025-06-05"
+    },
+    {
+      "caseName": "schema-validation",
+      "fixture": "trip-barcelona",
+      "passed": true,
+      "message": "El itinerario cumple el schema Zod"
+    },
+    {
+      "caseName": "activities-per-day",
+      "fixture": "trip-barcelona",
+      "passed": true,
+      "message": "Todos los días tienen entre 1 y 8 actividades",
+      "details": ""
+    }
+  ]
+}
