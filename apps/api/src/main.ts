@@ -10,7 +10,7 @@ async function bootstrap() {
 app.enableCors({
   origin: [
     'http://localhost:3001',
-    'https://ai-travel-planner.vercel.app',
+    'https://ai-travel-planner-blue.vercel.app',
     /\.vercel\.app$/,
   ],
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
