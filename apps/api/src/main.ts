@@ -7,11 +7,15 @@ async function bootstrap() {
 
   app.setGlobalPrefix('api')
 
-  app.enableCors({
-    origin: 'http://localhost:3001',
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
-    credentials: true,
-  })
+app.enableCors({
+  origin: [
+    'http://localhost:3001',
+    'https://ai-travel-planner.vercel.app',
+    /\.vercel\.app$/,
+  ],
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+  credentials: true,
+})
 
   app.useGlobalPipes(
     new ValidationPipe({
