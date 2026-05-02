@@ -45,7 +45,7 @@ export default function HomePage() {
               🗺️ Crear un viaje gratis
             </Link>
             <a
-              href="https://github.com/craguila14"
+              href="https://github.com/craguila14/ai-travel-planner"
               target="_blank"
               rel="noopener noreferrer"
               className="px-8 py-4 bg-white/20 backdrop-blur-sm text-white font-bold text-lg rounded-2xl hover:bg-white/30 transition-colors"
