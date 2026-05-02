@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { tripsApi, Trip, itinerariesApi } from '@/lib/api'
-import { storage } from '@/lib/storage'
 import { toast } from 'sonner'
 import { useParticipant } from '@/hooks/useParticipant'
 
@@ -35,22 +34,20 @@ export default function TripPage() {
   const [joining, setJoining] = useState(false)
   const [joinName, setJoinName] = useState('')
   const [showJoinForm, setShowJoinForm] = useState(false)
-
-const { participant, save, hydrated } = useParticipant(slug)
+  const { participant, save, hydrated } = useParticipant(slug)
 
   useEffect(() => {
     loadTrip()
   }, [slug])
 
   useEffect(() => {
-  const interval = setInterval(() => {
-    if (trip?.status !== 'DONE') {
-      loadTrip()
-    }
-  }, 5000)
-
-  return () => clearInterval(interval)
-}, [trip?.status])
+    const interval = setInterval(() => {
+      if (trip?.status !== 'DONE') {
+        loadTrip()
+      }
+    }, 5000)
+    return () => clearInterval(interval)
+  }, [trip?.status])
 
   async function loadTrip() {
     try {
@@ -68,11 +65,7 @@ const { participant, save, hydrated } = useParticipant(slug)
     setJoining(true)
     try {
       const { trip: updatedTrip, participantId } = await tripsApi.join(slug, joinName)
-     save({
-  participantId,
-  displayName: joinName,
-  isOrganizer: false,
-})
+      save({ participantId, displayName: joinName, isOrganizer: false })
       setTrip(updatedTrip)
       setShowJoinForm(false)
       toast.success(`¡Bienvenido, ${joinName}!`)
@@ -100,7 +93,7 @@ const { participant, save, hydrated } = useParticipant(slug)
 
   const status = STATUS_LABELS[trip.status]
   const gradient = getGradient(slug)
-  const isParticipant = !!participant
+  const isParticipant = hydrated && !!participant
   const hasProposal = trip.proposals?.some(
     (p) => p.participantId === participant?.participantId,
   )
@@ -115,7 +108,6 @@ const { participant, save, hydrated } = useParticipant(slug)
           </p>
           <h1 className="text-4xl font-bold mb-1">{trip.name}</h1>
           <p className="text-white/80 text-lg mb-4">📍 {trip.destination}</p>
-
           <div className="flex flex-wrap gap-3 text-sm">
             <span className="bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full">
               📅 {new Date(trip.startDate).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })}
@@ -147,7 +139,9 @@ const { participant, save, hydrated } = useParticipant(slug)
         <div className="bg-white rounded-2xl p-4 shadow-sm flex items-center gap-3">
           <div className="flex-1 min-w-0">
             <p className="text-xs text-gray-500 mb-1 font-semibold uppercase tracking-wide">Link para compartir</p>
-            <p className="text-sm text-gray-700 truncate">{typeof window !== 'undefined' ? window.location.href : ''}</p>
+            <p className="text-sm text-gray-700 truncate">
+              {typeof window !== 'undefined' ? window.location.href : ''}
+            </p>
           </div>
           <button
             onClick={copyLink}
@@ -162,9 +156,7 @@ const { participant, save, hydrated } = useParticipant(slug)
           <h2 className="font-bold text-gray-700 mb-3">👥 Participantes</h2>
           <div className="flex flex-col gap-2">
             {trip.participants.map((p) => {
-              const submitted = trip.proposals?.some(
-                (prop) => prop.participantId === p.id,
-              )
+              const submitted = trip.proposals?.some((prop) => prop.participantId === p.id)
               return (
                 <div key={p.id} className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
@@ -190,122 +182,80 @@ const { participant, save, hydrated } = useParticipant(slug)
         </div>
 
         {/* Acciones */}
-{!hydrated ? (
-  <div className="h-12 bg-gray-100 rounded-2xl animate-pulse" />
-) : !isParticipant ? (
-  <div className="bg-white rounded-2xl p-4 shadow-sm">
-    {!showJoinForm ? (
-      <button
-        onClick={() => setShowJoinForm(true)}
-        className="w-full bg-gradient-to-r from-orange-500 to-pink-500 text-white font-bold py-3 rounded-xl hover:scale-105 transition-transform"
-      >
-        🙋 Unirme al viaje
-      </button>
-    ) : (
-      <form onSubmit={handleJoin} className="flex gap-2">
-        <input
-          value={joinName}
-          onChange={(e) => setJoinName(e.target.value)}
-          placeholder="Tu nombre"
-          required
-          className="flex-1 border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
-        />
-        <button
-          type="submit"
-          disabled={joining}
-          className="bg-gradient-to-r from-orange-500 to-pink-500 text-white font-bold px-4 py-2 rounded-xl hover:scale-105 transition-transform disabled:opacity-60"
-        >
-          {joining ? '...' : 'Entrar'}
-        </button>
-      </form>
-    )}
-  </div>
-) : (
-  <>
-    {isParticipant && participant?.isOrganizer && trip.status === 'COLLECTING' && trip.proposals?.length === trip.participants.length && (
-      <button
-        onClick={async () => {
-          try {
-            await itinerariesApi.generate(slug, participant.participantId)
-            toast.success('¡Itinerario generado!')
-            await loadTrip()
-          } catch (error: any) {
-            toast.error(error?.response?.data?.message ?? 'Error al generar')
-          }
-        }}
-        className="w-full bg-gradient-to-r from-violet-600 to-blue-500 text-white font-bold py-4 rounded-2xl hover:scale-105 transition-transform shadow-md"
-      >
-        🤖 Generar itinerario con IA
-      </button>
-    )}
+        {!hydrated ? (
+          <div className="h-12 bg-gray-100 rounded-2xl animate-pulse" />
+        ) : !isParticipant ? (
+          <div className="bg-white rounded-2xl p-4 shadow-sm">
+            {!showJoinForm ? (
+              <button
+                onClick={() => setShowJoinForm(true)}
+                className="w-full bg-gradient-to-r from-orange-500 to-pink-500 text-white font-bold py-3 rounded-xl hover:scale-105 transition-transform"
+              >
+                🙋 Unirme al viaje
+              </button>
+            ) : (
+              <form onSubmit={handleJoin} className="flex gap-2">
+                <input
+                  value={joinName}
+                  onChange={(e) => setJoinName(e.target.value)}
+                  placeholder="Tu nombre"
+                  required
+                  className="flex-1 border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
+                />
+                <button
+                  type="submit"
+                  disabled={joining}
+                  className="bg-gradient-to-r from-orange-500 to-pink-500 text-white font-bold px-4 py-2 rounded-xl hover:scale-105 transition-transform disabled:opacity-60"
+                >
+                  {joining ? '...' : 'Entrar'}
+                </button>
+              </form>
+            )}
+          </div>
+        ) : (
+          <>
+            {participant?.isOrganizer &&
+              trip.status === 'COLLECTING' &&
+              trip.proposals?.length === trip.participants.length && (
+                <button
+                  onClick={async () => {
+                    try {
+                      await itinerariesApi.generate(slug, participant.participantId)
+                      toast.success('¡Itinerario generado!')
+                      await loadTrip()
+                    } catch (error: any) {
+                      toast.error(error?.response?.data?.message ?? 'Error al generar')
+                    }
+                  }}
+                  className="w-full bg-gradient-to-r from-violet-600 to-blue-500 text-white font-bold py-4 rounded-2xl hover:scale-105 transition-transform shadow-md"
+                >
+                  🤖 Generar itinerario con IA
+                </button>
+              )}
 
-    {trip.status === 'COLLECTING' && (
-      <button
-        onClick={() => router.push(`/trips/${slug}/proposal`)}
-        className={`w-full font-bold py-4 rounded-2xl text-white hover:scale-105 transition-transform shadow-md bg-gradient-to-r ${
-          hasProposal ? 'from-green-500 to-teal-500' : 'from-orange-500 to-pink-500'
-        }`}
-      >
-        {hasProposal ? '✏️ Editar mi propuesta' : '📝 Enviar mi propuesta'}
-      </button>
-    )}
+            {trip.status === 'COLLECTING' && (
+              <button
+                onClick={() => router.push(`/trips/${slug}/proposal`)}
+                className={`w-full font-bold py-4 rounded-2xl text-white hover:scale-105 transition-transform shadow-md bg-gradient-to-r ${
+                  hasProposal ? 'from-green-500 to-teal-500' : 'from-orange-500 to-pink-500'
+                }`}
+              >
+                {hasProposal ? '✏️ Editar mi propuesta' : '📝 Enviar mi propuesta'}
+              </button>
+            )}
 
-    {(trip.status === 'VOTING' || trip.status === 'DONE') && (
-      <button
-        onClick={() => router.push(`/trips/${slug}/itinerary`)}
-        className="w-full bg-gradient-to-r from-violet-600 to-blue-500 text-white font-bold py-4 rounded-2xl hover:scale-105 transition-transform shadow-md"
-      >
-        🗓️ Ver itinerario
-      </button>
-    )}
-  </>
-)}
-
-        {isParticipant && trip.status === 'COLLECTING' && (
-          <button
-            onClick={() => router.push(`/trips/${slug}/proposal`)}
-            className={`w-full font-bold py-4 rounded-2xl text-white hover:scale-105 transition-transform shadow-md bg-gradient-to-r ${
-              hasProposal
-                ? 'from-green-500 to-teal-500'
-                : 'from-orange-500 to-pink-500'
-            }`}
-          >
-            {hasProposal ? '✏️ Editar mi propuesta' : '📝 Enviar mi propuesta'}
-          </button>
+            {(trip.status === 'VOTING' || trip.status === 'DONE') && (
+              <button
+                onClick={() => router.push(`/trips/${slug}/itinerary`)}
+                className="w-full bg-gradient-to-r from-violet-600 to-blue-500 text-white font-bold py-4 rounded-2xl hover:scale-105 transition-transform shadow-md"
+              >
+                🗓️ Ver itinerario
+              </button>
+            )}
+          </>
         )}
-
-        {isParticipant && (trip.status === 'VOTING' || trip.status === 'DONE') && (
-          <button
-            onClick={() => router.push(`/trips/${slug}/itinerary`)}
-            className="w-full bg-gradient-to-r from-violet-600 to-blue-500 text-white font-bold py-4 rounded-2xl hover:scale-105 transition-transform shadow-md"
-          >
-            🗓️ Ver itinerario
-          </button>
-        )}
-
-        {isParticipant &&
-  participant?.isOrganizer &&
-  trip.status === 'COLLECTING' &&
-  trip.proposals?.length === trip.participants.length && (
-    <button
-      onClick={async () => {
-        try {
-          await itinerariesApi.generate(slug, participant.participantId)
-          toast.success('¡Itinerario generado!')
-          await loadTrip()
-        } catch (error: any) {
-          toast.error(error?.response?.data?.message ?? 'Error al generar')
-        }
-      }}
-      className="w-full bg-gradient-to-r from-violet-600 to-blue-500 text-white font-bold py-4 rounded-2xl hover:scale-105 transition-transform shadow-md"
-    >
-      🤖 Generar itinerario con IA
-    </button>
-  )}
 
       </div>
-
-      
     </main>
   )
 }
