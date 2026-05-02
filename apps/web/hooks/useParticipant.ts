@@ -11,10 +11,12 @@ interface ParticipantData {
 
 export function useParticipant(tripSlug: string) {
   const [participant, setParticipant] = useState<ParticipantData | null>(null)
+  const [hydrated, setHydrated] = useState(false)
 
   useEffect(() => {
     const data = storage.getParticipant(tripSlug)
     setParticipant(data)
+    setHydrated(true)
   }, [tripSlug])
 
   const save = (data: ParticipantData) => {
@@ -22,5 +24,5 @@ export function useParticipant(tripSlug: string) {
     setParticipant(data)
   }
 
-  return { participant, save }
+  return { participant, save, hydrated }
 }
